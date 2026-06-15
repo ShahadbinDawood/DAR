@@ -33,28 +33,33 @@ public class Home {
 
 
 
-//    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private Set<MaintenanceReminder> maintenanceReminders;
-//
-//
-//    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private Set<Maintenance> maintenances;
-//
-//
-//    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private Set<Bill> bills;
-//
-//
-//    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private Set<Sensor> sensors;
-//
-//
-//    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private Set<PurchaseInvoice> purchaseInvoices;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
+    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<MaintenanceReminder> maintenanceReminders;
+
+
+    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Maintenance> maintenances;
+
+
+    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Bill> bills;
+
+
+    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Sensor> sensors;
+
+
+    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<PurchaseInvoice> purchaseInvoices;
 
 }

@@ -18,10 +18,13 @@ public class SensorReading {
     private Integer id;
 
 
+    @Column(nullable = false)
     private Double readingValue;
 
+    @Column(nullable = false)
     private String unit;
 
+    @Column(nullable = false)
     private LocalDateTime readingDate;
 
 //    @ManyToOne
