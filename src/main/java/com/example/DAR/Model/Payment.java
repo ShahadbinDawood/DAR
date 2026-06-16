@@ -20,12 +20,16 @@ public class Payment {
 
     @Column(nullable = false)
     private Double amount;
+
     @Column(nullable = false)
     private String paymentMethod;
+
     @Column(nullable = false)
     private LocalDate paymentDate;
+
     @Column(nullable = false)
     private String status;
+
     @Column(nullable = false)
     private String transactionReference;
 

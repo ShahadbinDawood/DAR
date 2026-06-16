@@ -16,16 +16,22 @@ public class HomeItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(nullable = false)
     private String category;
+
     @Column(nullable = false)
     private String brand;
+
     @Column(nullable = false)
     private LocalDate installDate;
+
     @Column(nullable = false)
     private Integer lifespanMonth;
+
     @Column(nullable = false)
     private LocalTime nextServiceDate;
+
     @Column(nullable = false)
     private String notes;
 
