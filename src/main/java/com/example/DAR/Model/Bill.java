@@ -1,6 +1,7 @@
 package com.example.DAR.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(12) not null check(type = 'WATER' or type = 'ELECTRICITY' or type = 'GAS')")
     private String type;
 
     @Column(nullable = false)
@@ -41,7 +42,7 @@ public class Bill {
     @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
+
     private Boolean isAnomaly;
 
     @Column(nullable = false)

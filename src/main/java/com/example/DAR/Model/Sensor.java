@@ -29,8 +29,10 @@ public class Sensor {
     // اتوقع نقدر نخليه ديفولت
     @Column(nullable = false)
     private LocalDate lastPing;
+    @Column(nullable = false)
+    private String  serialNumber;
 
-
+    private String imageUrl;
     @ManyToOne
     @JoinColumn(name = "home_id")
     private Home home;

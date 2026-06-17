@@ -20,6 +20,8 @@ public class SensorDtoOut {
     private String location;
     private Boolean isActive;
     private LocalDate lastPing;
+    private String  serialNumber;
+    private String imageUrl;
 
 
 

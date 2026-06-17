@@ -33,7 +33,7 @@ public class SensorService {
 
         Sensor sensor = modelMapper.map(dto, Sensor.class);
         sensor.setHome(home);
-        sensor.setIsActive(true);
+        sensor.setIsActive(false);
         sensor.setLastPing(LocalDate.now());
 
          sensorRepository.save(sensor);

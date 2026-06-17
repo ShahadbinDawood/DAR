@@ -19,6 +19,7 @@ public class BillDtoIn {
 
 
     @NotNull(message = "Bill type is required")
+    @Pattern( regexp = "(?i)^(WATER|ELECTRICITY|GAS)$",message = "Type must be WATER, ELECTRICITY, or GAS")
     private String type;
 
     @NotNull(message = "Bill month is required")
