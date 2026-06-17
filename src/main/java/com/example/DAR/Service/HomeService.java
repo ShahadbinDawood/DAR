@@ -55,6 +55,7 @@ public class HomeService {
         home.setLatitude(homeDTOIn.getLatitude());
         home.setLongitude(homeDTOIn.getLongitude());
         home.setBuildYear(homeDTOIn.getBuildYear());
+        home.setCity(homeDTOIn.getCity());
         home.setUser(user);
         homeRepository.save(home);
     }
@@ -72,6 +73,7 @@ public class HomeService {
         home.setLatitude(homeDTOIn.getLatitude());
         home.setLongitude(homeDTOIn.getLongitude());
         home.setBuildYear(homeDTOIn.getBuildYear());
+        home.setCity(homeDTOIn.getCity());
         home.setUser(user);
         homeRepository.save(home);
     }
