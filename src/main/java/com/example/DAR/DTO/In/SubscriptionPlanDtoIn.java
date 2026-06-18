@@ -13,9 +13,18 @@ public class SubscriptionPlanDtoIn {
     @NotEmpty(message = "Name is required")
     private String name;
 
+    @NotEmpty(message = "Subtitle is required")
+    private String subtitle;
+
     @NotNull(message = "Price is required")
     @PositiveOrZero(message = "Price must be zero or positive")
     private Double price;
+
+    @NotNull(message = "Popular flag is required")
+    private Boolean isPopular;
+
+    @NotNull(message = "Contact sales flag is required")
+    private Boolean contactSales;
 
     @NotNull(message = "Max homes is required")
     @Positive(message = "Max homes must be positive")
@@ -24,6 +33,10 @@ public class SubscriptionPlanDtoIn {
     @NotNull(message = "Max items is required")
     @Positive(message = "Max items must be positive")
     private Integer maxItems;
+
+    @NotNull(message = "Max sensors is required")
+    @Positive(message = "Max sensors must be positive")
+    private Integer maxSensors;
 
     @NotNull(message = "Max notifications per month is required")
     @PositiveOrZero(message = "Max notifications must be zero or positive")
@@ -38,4 +51,7 @@ public class SubscriptionPlanDtoIn {
 
     @NotNull(message = "Usage spike detection enabled is required")
     private Boolean usageSpikeDetectionEnabled;
+
+    @NotNull(message = "Priority support enabled is required")
+    private Boolean prioritySupportEnabled;
 }

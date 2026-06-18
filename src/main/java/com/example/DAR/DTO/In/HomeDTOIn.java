@@ -9,6 +9,9 @@ import lombok.Data;
 @Data
 public class HomeDTOIn {
 
+    @NotEmpty(message = "Name must not be empty")
+    private String name;
+
     @NotEmpty(message = "Address must not be empty")
     private String address;
 

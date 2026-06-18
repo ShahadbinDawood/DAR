@@ -1,5 +1,6 @@
 package com.example.DAR.Repository;
 
+import com.example.DAR.Enums.UserSubscriptionStatus;
 import com.example.DAR.Model.UserSubscription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import java.util.List;
 public interface UserSubscriptionRepository extends JpaRepository<UserSubscription, Integer> {
     UserSubscription findUserSubscriptionById(Integer id);
     List<UserSubscription> findUserSubscriptionsByUserId(Integer userId);
-    List<UserSubscription> findUserSubscriptionsByStatus(String status);
+    List<UserSubscription> findUserSubscriptionsByStatus(UserSubscriptionStatus status);
+    UserSubscription findUserSubscriptionByUserIdAndStatus(Integer userId, UserSubscriptionStatus status);
 
 }

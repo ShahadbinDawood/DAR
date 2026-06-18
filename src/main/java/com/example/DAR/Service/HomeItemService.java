@@ -4,12 +4,15 @@ import com.example.DAR.Api.ApiException;
 import com.example.DAR.DTO.In.HomeItemDTOIn;
 import com.example.DAR.DTO.Out.HomeItemDTOOut;
 import com.example.DAR.DTO.Out.HomeItemSummaryDTOOut;
+import com.example.DAR.Enums.UserSubscriptionStatus;
 import com.example.DAR.Model.Home;
 import com.example.DAR.Model.HomeItem;
 import com.example.DAR.Enums.HomeItemCategory;
 import com.example.DAR.Enums.HomeItemStatus;
+import com.example.DAR.Model.UserSubscription;
 import com.example.DAR.Repository.HomeItemRepository;
 import com.example.DAR.Repository.HomeRepository;
+import com.example.DAR.Repository.UserSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ public class HomeItemService {
 
     private final HomeItemRepository homeItemRepository;
     private final HomeRepository homeRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
     private final ModelMapper modelMapper;
 
     public List<HomeItemDTOOut> getAll() {
@@ -36,6 +40,13 @@ public class HomeItemService {
         Home home = homeRepository.findHomeById(homeId);
         if (home == null) {
             throw new ApiException("Home not found");
+        }
+        UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(home.getUser().getId(), UserSubscriptionStatus.ACTIVE);
+        if (subscription == null) {
+            throw new ApiException("Active subscription not found");
+        }
+        if (homeItemRepository.countHomeItemsByHomeUserId(home.getUser().getId()) >= subscription.getSubscriptionPlan().getMaxItems()) {
+            throw new ApiException("You have reached the maximum number of items for your subscription");
         }
         HomeItem homeItem = new HomeItem();
         homeItem.setName(homeItemDTOIn.getName());

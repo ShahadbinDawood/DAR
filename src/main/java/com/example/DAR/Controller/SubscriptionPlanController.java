@@ -16,26 +16,26 @@ public class SubscriptionPlanController {
     private final SubscriptionPlanService subscriptionPlanService;
 
     @GetMapping("/get")
-    public ResponseEntity getAllPlans() {
+    public ResponseEntity<?> getAllPlans() {
         return ResponseEntity.status(200).body(subscriptionPlanService.getAllPlans());
     }
 
 
     @PostMapping("/add")
-    public ResponseEntity addPlan(@RequestBody @Valid SubscriptionPlanDtoIn dto) {
+    public ResponseEntity<?> addPlan(@RequestBody @Valid SubscriptionPlanDtoIn dto) {
         subscriptionPlanService.addPlan(dto);
         return ResponseEntity.status(200).body(new ApiResponse("Subscription plan added successfully"));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updatePlan(@PathVariable Integer id,
+    public ResponseEntity<?> updatePlan(@PathVariable Integer id,
                                      @RequestBody @Valid SubscriptionPlanDtoIn dto) {
         subscriptionPlanService.updatePlan(id, dto);
         return ResponseEntity.status(200).body(new ApiResponse("Subscription plan updated successfully"));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity deletePlan(@PathVariable Integer id) {
+    public ResponseEntity<?> deletePlan(@PathVariable Integer id) {
         subscriptionPlanService.deletePlan(id);
         return ResponseEntity.status(200).body(new ApiResponse("Subscription plan deleted successfully"));
     }

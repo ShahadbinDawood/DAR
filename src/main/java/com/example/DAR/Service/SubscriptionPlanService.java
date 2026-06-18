@@ -40,13 +40,18 @@ public class SubscriptionPlanService {
         }
 
         plan.setName(dto.getName());
+        plan.setSubtitle(dto.getSubtitle());
         plan.setPrice(dto.getPrice());
+        plan.setIsPopular(dto.getIsPopular());
+        plan.setContactSales(dto.getContactSales());
         plan.setMaxHomes(dto.getMaxHomes());
         plan.setMaxItems(dto.getMaxItems());
+        plan.setMaxSensors(dto.getMaxSensors());
         plan.setMaxNotificationsPerMonth(dto.getMaxNotificationsPerMonth());
         plan.setMaxAiReportsPerMonth(dto.getMaxAiReportsPerMonth());
         plan.setWeatherReminderEnabled(dto.getWeatherReminderEnabled());
         plan.setUsageSpikeDetectionEnabled(dto.getUsageSpikeDetectionEnabled());
+        plan.setPrioritySupportEnabled(dto.getPrioritySupportEnabled());
 
         subscriptionPlanRepository.save(plan);
     }

@@ -1,7 +1,7 @@
 package com.example.DAR.Model;
 
+import com.example.DAR.Enums.PaymentStatus;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,8 +27,9 @@ public class Payment {
     @Column(nullable = false)
     private LocalDate paymentDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private PaymentStatus status;
 
     @Column(nullable = false)
     private String transactionReference;

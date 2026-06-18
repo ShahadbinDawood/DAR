@@ -11,11 +11,16 @@ import lombok.NoArgsConstructor;
 public class SubscriptionPlanDtoOut {
     private Integer id;
     private String name;
+    private String subtitle;
     private Double price;
+    private Boolean isPopular;
+    private Boolean contactSales;
     private Integer maxHomes;
     private Integer maxItems;
+    private Integer maxSensors;
     private Integer maxNotificationsPerMonth;
     private Integer maxAiReportsPerMonth;
     private Boolean weatherReminderEnabled;
     private Boolean usageSpikeDetectionEnabled;
+    private Boolean prioritySupportEnabled;
 }

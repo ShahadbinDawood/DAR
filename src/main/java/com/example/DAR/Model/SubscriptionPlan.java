@@ -23,13 +23,25 @@ public class SubscriptionPlan {
     private String name;
 
     @Column(nullable = false)
+    private String subtitle;
+
+    @Column(nullable = false)
     private Double price;
+
+    @Column(nullable = false)
+    private Boolean isPopular;
+
+    @Column(nullable = false)
+    private Boolean contactSales;
 
     @Column(nullable = false)
     private Integer maxHomes;
 
     @Column(nullable = false)
     private Integer maxItems;
+
+    @Column(nullable = false)
+    private Integer maxSensors;
 
     @Column(nullable = false)
     private Integer maxNotificationsPerMonth;
@@ -42,6 +54,9 @@ public class SubscriptionPlan {
 
     @Column(nullable = false)
     private Boolean usageSpikeDetectionEnabled;
+
+    @Column(nullable = false)
+    private Boolean prioritySupportEnabled;
 
 
     @OneToMany(mappedBy = "subscriptionPlan")

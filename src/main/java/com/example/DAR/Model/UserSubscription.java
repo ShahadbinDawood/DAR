@@ -1,13 +1,14 @@
 package com.example.DAR.Model;
 
 
+import com.example.DAR.Enums.PaymentStatus;
+import com.example.DAR.Enums.UserSubscriptionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 
 @Data
@@ -25,11 +26,13 @@ public class UserSubscription {
     @Column(nullable = false)
     private LocalDate endDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private UserSubscriptionStatus status;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
 
     @ManyToOne

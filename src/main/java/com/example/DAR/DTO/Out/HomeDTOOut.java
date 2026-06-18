@@ -7,6 +7,7 @@ import lombok.Data;
 public class HomeDTOOut {
 
     private Integer id;
+    private String name;
     private String address;
     private String city;
     private Double latitude;

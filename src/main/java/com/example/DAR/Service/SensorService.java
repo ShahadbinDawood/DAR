@@ -3,13 +3,14 @@ package com.example.DAR.Service;
 
 import com.example.DAR.Api.ApiException;
 import com.example.DAR.DTO.In.SensorDtoIn;
-import com.example.DAR.DTO.Out.PurchaseInvoiceDtoOut;
 import com.example.DAR.DTO.Out.SensorDtoOut;
+import com.example.DAR.Enums.UserSubscriptionStatus;
 import com.example.DAR.Model.Home;
-import com.example.DAR.Model.PurchaseInvoice;
 import com.example.DAR.Model.Sensor;
+import com.example.DAR.Model.UserSubscription;
 import com.example.DAR.Repository.HomeRepository;
 import com.example.DAR.Repository.SensorRepository;
+import com.example.DAR.Repository.UserSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,20 @@ public class SensorService {
     private final SensorRepository sensorRepository;
     private final ModelMapper modelMapper;
     private final HomeRepository homeRepository ;
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
     public void addSensor(Integer homeId, SensorDtoIn dto) {
 
         Home home = homeRepository.findHomeById(homeId);
         if (home==null) {
             throw new ApiException("home not found");
+        }
+        UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(home.getUser().getId(), UserSubscriptionStatus.ACTIVE);
+        if (subscription == null) {
+            throw new ApiException("Active subscription not found");
+        }
+        if (sensorRepository.countSensorsByHomeUserId(home.getUser().getId()) >= subscription.getSubscriptionPlan().getMaxSensors()) {
+            throw new ApiException("You have reached the maximum number of sensors for your subscription");
         }
 
         Sensor sensor = modelMapper.map(dto, Sensor.class);

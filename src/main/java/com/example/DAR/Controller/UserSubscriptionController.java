@@ -1,9 +1,8 @@
 package com.example.DAR.Controller;
 
 import com.example.DAR.Api.ApiResponse;
-import com.example.DAR.DTO.Out.UserSubscriptionDtoOut;
+import com.example.DAR.Enums.UserSubscriptionStatus;
 import com.example.DAR.Service.UserSubscriptionService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,21 +18,9 @@ public class UserSubscriptionController {
         return ResponseEntity.status(200).body(userSubscriptionService.getAllUserSubscriptions());
     }
 
-    @PostMapping("/add/{userId}/{planId}")
-    public ResponseEntity<?> addUserSubscription(@PathVariable Integer userId,
-                                              @PathVariable Integer planId,
-                                              @RequestBody @Valid UserSubscriptionDtoOut dto) {
-        userSubscriptionService.addUserSubscription(userId, planId, dto);
-        return ResponseEntity.status(200).body(new ApiResponse("User subscription added successfully"));
-    }
-
-    @PutMapping("/update/{subscriptionId}/{userId}/{planId}")
-    public ResponseEntity<?> updateUserSubscription(@PathVariable Integer subscriptionId,
-                                                 @PathVariable Integer userId,
-                                                 @PathVariable Integer planId,
-                                                 @RequestBody @Valid UserSubscriptionDtoOut dto) {
-        userSubscriptionService.updateUserSubscription(subscriptionId, userId, planId, dto);
-        return ResponseEntity.status(200).body(new ApiResponse("User subscription updated successfully"));
+    @PostMapping("/subscribe/{userId}/{planId}")
+    public ResponseEntity<?> subscribe(@PathVariable Integer userId, @PathVariable Integer planId) {
+        return ResponseEntity.status(200).body(userSubscriptionService.createUserSubscription(userId, planId));
     }
 
     @DeleteMapping("/delete/{id}")
@@ -48,7 +35,7 @@ public class UserSubscriptionController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<?> getUserSubscriptionsByStatus(@PathVariable String status) {
+    public ResponseEntity<?> getUserSubscriptionsByStatus(@PathVariable UserSubscriptionStatus status) {
         return ResponseEntity.status(200).body(userSubscriptionService.getAllUserSubscriptionsByStatus(status));
     }
 }

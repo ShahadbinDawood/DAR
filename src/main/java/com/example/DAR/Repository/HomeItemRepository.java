@@ -17,6 +17,8 @@ public interface HomeItemRepository extends JpaRepository<HomeItem, Integer> {
 
     List<HomeItem> findHomeItemsByHomeId(Integer homeId);
 
+    Integer countHomeItemsByHomeUserId(Integer userId);
+
     @Query("select h from HomeItem h where h.home.id = ?1 and h.category = ?2")
     List<HomeItem> findByCategory(Integer homeId, HomeItemCategory category);
 

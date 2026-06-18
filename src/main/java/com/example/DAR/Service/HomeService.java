@@ -3,10 +3,13 @@ package com.example.DAR.Service;
 import com.example.DAR.Api.ApiException;
 import com.example.DAR.DTO.In.HomeDTOIn;
 import com.example.DAR.DTO.Out.HomeDTOOut;
+import com.example.DAR.Enums.UserSubscriptionStatus;
 import com.example.DAR.Model.Home;
 import com.example.DAR.Model.User;
+import com.example.DAR.Model.UserSubscription;
 import com.example.DAR.Repository.HomeRepository;
 import com.example.DAR.Repository.UserRepository;
+import com.example.DAR.Repository.UserSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ public class HomeService {
 
     private final HomeRepository homeRepository;
     private final UserRepository userRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
     private final ModelMapper modelMapper;
 
     public List<HomeDTOOut> getAll() {
@@ -32,7 +36,15 @@ public class HomeService {
         if (user == null) {
             throw new ApiException("User not found");
         }
+        UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(userId, UserSubscriptionStatus.ACTIVE);
+        if (subscription == null) {
+            throw new ApiException("Active subscription not found");
+        }
+        if (homeRepository.findHomesByUserId(userId).size() >= subscription.getSubscriptionPlan().getMaxHomes()) {
+            throw new ApiException("You have reached the maximum number of homes for your subscription");
+        }
         Home home = new Home();
+        home.setName(homeDTOIn.getName());
         home.setAddress(homeDTOIn.getAddress());
         home.setLatitude(homeDTOIn.getLatitude());
         home.setLongitude(homeDTOIn.getLongitude());
@@ -52,6 +64,7 @@ public class HomeService {
         if (user == null) {
             throw new ApiException("User not found");
         }
+        home.setName(homeDTOIn.getName());
         home.setAddress(homeDTOIn.getAddress());
         home.setLatitude(homeDTOIn.getLatitude());
         home.setLongitude(homeDTOIn.getLongitude());
