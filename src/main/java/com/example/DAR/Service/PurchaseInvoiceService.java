@@ -4,6 +4,7 @@ package com.example.DAR.Service;
 import com.example.DAR.Api.ApiException;
 import com.example.DAR.DTO.In.PurchaseInvoiceDtoIn;
 import com.example.DAR.DTO.Out.PurchaseInvoiceDtoOut;
+import com.example.DAR.DTO.Out.PurchaseInvoiceStatsDtoOut;
 import com.example.DAR.Model.Home;
 import com.example.DAR.Model.PurchaseInvoice;
 import com.example.DAR.Repository.HomeRepository;
@@ -67,6 +68,26 @@ public class PurchaseInvoiceService {
         List<PurchaseInvoice> invoices = purchaseInvoiceRepository.findPurchaseInvoiceByHomeIdAndCategory(homeId ,category);
         return invoices.stream().map(invoice -> modelMapper.map(invoice, PurchaseInvoiceDtoOut.class)).toList();
     }
+    // STATS by Home
+    public PurchaseInvoiceStatsDtoOut getStatsByHome(Integer homeId) {
+        if (homeRepository.findHomeById(homeId) == null) throw new ApiException("home not found");
+
+        List<Object[]> rawStats = purchaseInvoiceRepository.findStatsByHomeId(homeId);
+        List<PurchaseInvoiceStatsDtoOut.CategoryStatDtoOut> byCategory = rawStats.stream()
+                .map(row -> new PurchaseInvoiceStatsDtoOut.CategoryStatDtoOut(
+                        (String) row[0],
+                        ((Number) row[1]).doubleValue(),
+                        ((Number) row[2]).longValue()))
+                .toList();
+
+        List<PurchaseInvoiceDtoOut> topPurchases = purchaseInvoiceRepository.findTopPurchasesByHomeId(homeId)
+                .stream().limit(5)
+                .map(p -> modelMapper.map(p, PurchaseInvoiceDtoOut.class))
+                .toList();
+
+        return new PurchaseInvoiceStatsDtoOut(byCategory, topPurchases);
+    }
+
     // UPLOAD IMAGE → AI extract → save Invoice
     public PurchaseInvoiceDtoOut addInvoiceFromImage(Integer homeId, MultipartFile file) {
         Home home = homeRepository.findHomeById(homeId);

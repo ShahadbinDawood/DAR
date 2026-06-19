@@ -3,8 +3,11 @@ package com.example.DAR.Controller;
 import com.example.DAR.Api.ApiResponse;
 import com.example.DAR.DTO.In.BillDtoIn;
 import com.example.DAR.Service.Billservice;
+import com.example.DAR.Service.PdfReportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class BillController {
 
     private final Billservice billService;
+    private final PdfReportService pdfReportService;
 
     @PostMapping("/add/{homeId}")
     public ResponseEntity<?> addBill(@PathVariable Integer homeId, @RequestBody @Valid BillDtoIn dto) {
@@ -63,5 +67,26 @@ public class BillController {
     @GetMapping("/get/anomalies/{homeId}")
     public ResponseEntity<?> getAnomalyBills(@PathVariable Integer homeId) {
         return ResponseEntity.status(200).body(billService.getAnomalyBills(homeId));
+    }
+
+    @GetMapping("/report/{homeId}/{year}/{month}")
+    public ResponseEntity<?> getMonthlyReport(@PathVariable Integer homeId, @PathVariable int year, @PathVariable int month) {
+        return ResponseEntity.status(200).body(billService.getMonthlyReport(homeId, year, month));
+    }
+
+    @GetMapping("/compare/{homeId}")
+    public ResponseEntity<?> compareBills(@PathVariable Integer homeId,
+                                          @RequestParam String type,
+                                          @RequestParam(defaultValue = "6") int months) {
+        return ResponseEntity.status(200).body(billService.compareBills(homeId, type, months));
+    }
+
+    @GetMapping("/report/pdf/{homeId}/{year}/{month}")
+    public ResponseEntity<byte[]> getMonthlyReportPdf(@PathVariable Integer homeId, @PathVariable int year, @PathVariable int month) {
+        byte[] pdf = pdfReportService.generateMonthlyReport(homeId, year, month);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report-" + year + "-" + month + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 }

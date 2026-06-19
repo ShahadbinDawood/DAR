@@ -53,4 +53,9 @@ public class PurchaseInvoiceController {
     public ResponseEntity<?> addInvoiceFromImage(@PathVariable Integer homeId, @RequestParam("file") MultipartFile file) {
         return ResponseEntity.status(200).body(purchaseInvoiceService.addInvoiceFromImage(homeId, file));
     }
+
+    @GetMapping("/stats/{homeId}")
+    public ResponseEntity<?> getStats(@PathVariable Integer homeId) {
+        return ResponseEntity.status(200).body(purchaseInvoiceService.getStatsByHome(homeId));
+    }
 }

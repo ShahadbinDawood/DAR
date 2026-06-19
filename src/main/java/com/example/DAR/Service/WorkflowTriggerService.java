@@ -1,6 +1,11 @@
 package com.example.DAR.Service;
+
+import com.example.DAR.Api.ApiException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -8,13 +13,23 @@ public class WorkflowTriggerService {
 
     private final RestClient restClient = RestClient.create();
 
-    public void sendToN8n(Map<String, Object> payload) {
-        String n8nWebhookUrl = "http://localhost:5678/webhook/sensor-analysis";
+    @Value("${n8n.webhook.sensor-analysis}")
+    private String sensorAnalysisUrl;
+    public String triggerSensorAnalysis(Integer sensorId) {
+        try {
+            Map response = restClient.get()
+                    .uri(sensorAnalysisUrl + "?sensorId=" + sensorId)
+                    .retrieve()
+                    .body(Map.class);
 
-        restClient.post()
-                .uri(n8nWebhookUrl)
-                .body(payload)
-                .retrieve()
-                .toBodilessEntity(); // Fire and forget asynchronously
+            if (response != null && response.containsKey("content")) {
+                List<Map> content = (List<Map>) response.get("content");
+                if (!content.isEmpty()) return (String) content.get(0).get("text");
+            }
+            throw new ApiException("No content returned from N8N");
+        } catch (Exception e) {
+            throw new ApiException("Failed to analyze sensor readings: " + e.getMessage());
+        }
     }
+
 }

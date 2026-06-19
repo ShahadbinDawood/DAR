@@ -61,6 +61,16 @@ public class NotificationService {
         );
     }
 
+    public void sendWarrantyExpiryNotification(com.example.DAR.Model.User user, String productName, String message) {
+        if (user == null) throw new ApiException("User not found");
+        sendNotification(user, "WARRANTY_EXPIRY", "تنبيه: ضمان \"" + productName + "\" على وشك الانتهاء", message);
+    }
+
+    public void sendBillDueNotification(com.example.DAR.Model.User user, String typeAr, String message) {
+        if (user == null) throw new ApiException("User not found");
+        sendNotification(user, "BILL_DUE", "تذكير: فاتورة " + typeAr + " قادمة", message);
+    }
+
     public void sendBillAnomalyNotification(User user, String billType, int currentConsumption, double avgConsumption, String aiExplanation) {
         if (user == null) throw new ApiException("User not found");
 
@@ -120,6 +130,14 @@ public class NotificationService {
 
             case "BILL_ANOMALY":
                 subject = "تنبيه: استهلاك غير طبيعي في فاتورتك";
+                break;
+
+            case "BILL_DUE":
+                subject = "تذكير: فاتورة تستحق قريباً";
+                break;
+
+            case "WARRANTY_EXPIRY":
+                subject = "تنبيه: ضمان منتج على وشك الانتهاء";
                 break;
 
             default:

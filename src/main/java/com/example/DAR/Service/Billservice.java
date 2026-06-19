@@ -2,7 +2,9 @@ package com.example.DAR.Service;
 
 import com.example.DAR.Api.ApiException;
 import com.example.DAR.DTO.In.BillDtoIn;
+import com.example.DAR.DTO.Out.BillComparisonDtoOut;
 import com.example.DAR.DTO.Out.BillDtoOut;
+import com.example.DAR.DTO.Out.BillMonthlyReportDtoOut;
 import com.example.DAR.DTO.Out.SensorDtoOut;
 import com.example.DAR.Model.Bill;
 import com.example.DAR.Model.Home;
@@ -136,6 +138,34 @@ public class Billservice {
         } catch (Exception e) {
             throw new ApiException("Failed to parse AI response: " + e.getMessage());
         }
+    }
+
+    // COMPARE BILLS
+    public List<BillComparisonDtoOut> compareBills(Integer homeId, String type, int months) {
+        if (homeRepository.findHomeById(homeId) == null) throw new ApiException("home not found");
+        LocalDate from = LocalDate.now().minusMonths(months).withDayOfMonth(1);
+        List<Bill> bills = billRepository.findByHomeIdAndTypeAndBillMonthAfter(homeId, type.toUpperCase(), from);
+        return bills.stream()
+                .map(b -> new BillComparisonDtoOut(
+                        b.getBillMonth().getYear() + "-" + String.format("%02d", b.getBillMonth().getMonthValue()),
+                        b.getConsumption(),
+                        b.getAmount()))
+                .toList();
+    }
+
+    // MONTHLY REPORT
+    public List<BillMonthlyReportDtoOut> getMonthlyReport(Integer homeId, int year, int month) {
+        if (homeRepository.findHomeById(homeId) == null) throw new ApiException("home not found");
+        List<Bill> bills = billRepository.findByHomeIdAndYearAndMonth(homeId, year, month);
+        Map<String, BillMonthlyReportDtoOut> reportMap = new java.util.LinkedHashMap<>();
+        for (Bill b : bills) {
+            reportMap.computeIfAbsent(b.getType(), t -> new BillMonthlyReportDtoOut(t, 0, 0.0, 0));
+            BillMonthlyReportDtoOut r = reportMap.get(b.getType());
+            r.setTotalConsumption(r.getTotalConsumption() + b.getConsumption());
+            r.setTotalAmount(r.getTotalAmount() + (b.getAmount() != null ? b.getAmount() : 0));
+            r.setBillCount(r.getBillCount() + 1);
+        }
+        return new java.util.ArrayList<>(reportMap.values());
     }
 
     // GET Anomalies by Home

@@ -22,6 +22,7 @@ public class BillDtoOut {
     private Integer totalInstallment;
     private Integer paidInstallment;
     private String status;
+    private LocalDate dueDate;
     private String imageUrl;
 
 

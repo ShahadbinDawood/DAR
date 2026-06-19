@@ -20,8 +20,6 @@ public class SensorReadingDtoIn {
     private Double readingValue;
     @NotEmpty(message = "unit is required")
     private String unit;
-    @NotNull(message = "readingDate is required")
-    private LocalDateTime readingDate;
 
 
 }

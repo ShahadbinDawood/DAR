@@ -49,6 +49,8 @@ public class BillDtoIn {
     @NotNull(message = "Status is required")
     private String status; // مدري مطلوب او لا في البدايه
 
+    private LocalDate dueDate;
+
     @Pattern(regexp = "https?://.*", message = "Image URL must be a valid URL")
     private String imageUrl;
 

@@ -48,6 +48,8 @@ public class Bill {
 
     private Boolean isAnomaly;
 
+    private LocalDate dueDate;
+
     @Column(nullable = false)
     private String imageUrl;
 
