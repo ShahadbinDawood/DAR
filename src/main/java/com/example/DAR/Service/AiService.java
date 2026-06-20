@@ -5,6 +5,7 @@ import com.example.DAR.Api.ApiException;
 import lombok.RequiredArgsConstructor;
 
 import com.example.DAR.Model.HomeItem;
+import com.example.DAR.DTO.Out.NearbyPlaceDTOOut;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -263,6 +264,47 @@ public class AiService {
                 "Status: " + homeItem.getStatus() + ". " +
                 "Next service date: " + homeItem.getNextServiceDate() + ". " +
                 "Notes: " + homeItem.getNotes() + ".";
+
+        return callClaudeApiText(prompt);
+    }
+
+    public String generateHomeItemTroubleshootingSteps(HomeItem homeItem, String issueDescription) {
+        String prompt = "اكتب خطوات استكشاف مشكلة باللغة العربية لهذا الجهاز. " +
+                "استخدم لغة بسيطة ومناسبة لصاحب المنزل. " +
+                "أعد 4 خطوات فقط كنقاط قصيرة. " +
+                "لا تطلب من المستخدم تنفيذ أعمال كهربائية أو خطيرة بنفسه. " +
+                "إذا كانت المشكلة خطيرة، انصحه بالتواصل مع فني مختص. " +
+                "Device name: " + homeItem.getName() + ". " +
+                "Category: " + homeItem.getCategory() + ". " +
+                "Brand: " + homeItem.getBrand() + ". " +
+                "Model: " + homeItem.getModel() + ". " +
+                "Location: " + homeItem.getLocation() + ". " +
+                "Status: " + homeItem.getStatus() + ". " +
+                "User issue: " + issueDescription + ".";
+
+        return callClaudeApiText(prompt);
+    }
+
+    public String generateNearbyServiceRecommendation(HomeItem homeItem, List<NearbyPlaceDTOOut> places) {
+        StringBuilder placesText = new StringBuilder();
+        for (NearbyPlaceDTOOut place : places) {
+            placesText.append("- ")
+                    .append(place.getName())
+                    .append(" | type: ")
+                    .append(place.getType())
+                    .append(" | distance: ")
+                    .append(place.getDistanceInKm())
+                    .append(" km\n");
+        }
+
+        String prompt = "رشح أفضل أماكن قريبة لصيانة هذا الجهاز باللغة العربية. " +
+                "اختر أفضل 3 أماكن فقط من القائمة، واذكر سبب الترشيح باختصار. " +
+                "إذا كانت القائمة فارغة، قل إنه لا توجد نتائج قريبة مناسبة. " +
+                "Device name: " + homeItem.getName() + ". " +
+                "Category: " + homeItem.getCategory() + ". " +
+                "Brand: " + homeItem.getBrand() + ". " +
+                "Issue/status: " + homeItem.getStatus() + ".\n" +
+                "Nearby places:\n" + placesText;
 
         return callClaudeApiText(prompt);
     }
