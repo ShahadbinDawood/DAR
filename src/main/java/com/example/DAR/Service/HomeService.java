@@ -8,6 +8,7 @@ import com.example.DAR.Model.Home;
 import com.example.DAR.Model.User;
 import com.example.DAR.Model.UserSubscription;
 import com.example.DAR.Repository.HomeRepository;
+import com.example.DAR.Repository.NotificationRepository;
 import com.example.DAR.Repository.UserRepository;
 import com.example.DAR.Repository.UserSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class HomeService {
     private final UserRepository userRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final ModelMapper modelMapper;
+    private final NotificationService notificationService;
 
     public List<HomeDTOOut> getAll() {
         List<Home> homes = homeRepository.findAll();
@@ -53,6 +55,10 @@ public class HomeService {
         home.setPropertyType(homeDTOIn.getPropertyType());
         home.setUser(user);
         homeRepository.save(home);
+        // Send a one-time free AI smart tip after the user adds a home.
+        Home savedHome = homeRepository.save(home);
+        notificationService.sendFreeSmartTipUpsellNotification(savedHome.getId());
+
     }
 
     public void updateHome(Integer id, Integer userId, HomeDTOIn homeDTOIn) {

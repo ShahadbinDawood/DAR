@@ -38,8 +38,8 @@ public class User {
 
     private Integer aiCounter;
 
-    @Column(nullable = false)
-    private Boolean smartAlertsEnabled = false;
+    @Column(nullable = true)
+    private Boolean smartAlertsEnabled = true;
 
     @Column(nullable = false)
     private Boolean smartAlertIntroSent = false;

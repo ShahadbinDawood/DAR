@@ -21,4 +21,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
             LocalDateTime start,
             LocalDateTime end
     );
+    boolean existsNotificationByUserIdAndType(Integer userId, String type);
 }

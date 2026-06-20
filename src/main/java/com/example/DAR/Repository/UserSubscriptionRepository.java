@@ -1,5 +1,6 @@
 package com.example.DAR.Repository;
 
+import com.example.DAR.Enums.PaymentStatus;
 import com.example.DAR.Enums.UserSubscriptionStatus;
 import com.example.DAR.Model.UserSubscription;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,12 @@ public interface UserSubscriptionRepository extends JpaRepository<UserSubscripti
     List<UserSubscription> findUserSubscriptionsByStatus(UserSubscriptionStatus status);
     UserSubscription findUserSubscriptionByUserIdAndStatus(Integer userId, UserSubscriptionStatus status);
 
+    //  to verify daily AI reminder access from the database direct
+   // thiss avoids "Lazy Loading errors" from user.getUserSubscriptions()
+    boolean existsUserSubscriptionByUserIdAndStatusAndPaymentStatusAndSubscriptionPlan_DailyAIReminder(
+            Integer userId,
+            UserSubscriptionStatus status,
+            PaymentStatus paymentStatus,
+            Boolean dailyAIReminder
+    );
 }

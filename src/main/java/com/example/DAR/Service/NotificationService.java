@@ -9,10 +9,7 @@ import com.example.DAR.Model.Home;
 import com.example.DAR.Model.HomeItem;
 import com.example.DAR.Model.Notification;
 import com.example.DAR.Model.User;
-import com.example.DAR.Repository.HomeItemRepository;
-import com.example.DAR.Repository.HomeRepository;
-import com.example.DAR.Repository.NotificationRepository;
-import com.example.DAR.Repository.UserRepository;
+import com.example.DAR.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -34,6 +31,7 @@ public class NotificationService {
     private final WeatherService weatherService;
     private final OpenAIService openAIService;
     private final HomeItemRepository homeItemRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
     public List<Notification>  getAllNotifications() {
         return  notificationRepository.findAll();
@@ -649,10 +647,17 @@ public void sendDailyWeatherTipsAutomatically() {
         if (user == null) {
             throw new ApiException("User not found");
         }
-
-        if (!user.getSmartAlertsEnabled()) {
+//
+//        if (!user.getSmartAlertsEnabled()) {
+//            throw new ApiException("Smart alerts are disabled");
+//        }
+//        if (!hasDailyAiReminderAccess(user)) {
+//            throw new ApiException("Daily AI reminder is not available in the user's subscription plan");
+//        }
+        if (!Boolean.TRUE.equals(user.getSmartAlertsEnabled())) {
             throw new ApiException("Smart alerts are disabled");
         }
+
         if (!hasDailyAiReminderAccess(user)) {
             throw new ApiException("Daily AI reminder is not available in the user's subscription plan");
         }
@@ -718,18 +723,71 @@ public void sendDailyWeatherTipsAutomatically() {
     }
     // helper
     private boolean hasDailyAiReminderAccess(User user) {
+        return userSubscriptionRepository
+                .existsUserSubscriptionByUserIdAndStatusAndPaymentStatusAndSubscriptionPlan_DailyAIReminder(
+                        user.getId(),
+                        UserSubscriptionStatus.ACTIVE,
+                        PaymentStatus.PAID,
+                        true
+                );
+    }
+    public void sendFreeSmartTipUpsellNotification(Integer homeId) {
 
-        if (user.getUserSubscriptions() == null) {
-            return false;
+        Home home = homeRepository.findHomeById(homeId);
+
+        if (home == null) {
+            throw new ApiException("Home not found");
         }
 
-        return user.getUserSubscriptions().stream()
-                .anyMatch(subscription ->
-                        subscription.getStatus() == UserSubscriptionStatus.ACTIVE
-                                && subscription.getPaymentStatus() == PaymentStatus.PAID
-                                && subscription.getSubscriptionPlan() != null
-                                && Boolean.TRUE.equals(subscription.getSubscriptionPlan().getDailyAIReminder())
+        User user = home.getUser();
+
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+
+        boolean alreadySent =
+                notificationRepository.existsNotificationByUserIdAndType(
+                        user.getId(),
+                        "FREE_SMART_TIP_UPSELL"
                 );
+
+        if (alreadySent) {
+            return;
+        }
+
+        String weatherDescription = weatherService.getWeatherDescription(home.getCity());
+
+        String prompt = """
+            You are an AI assistant for DAR, a smart Arabic home care platform.
+
+            The user just added a home to DAR.
+            Based on today's weather, write one short Arabic smart home care tip.
+
+            City: %s
+            Today's weather: %s
+
+            Requirements:
+            - Arabic only.
+            - Short and practical.
+            - Do not say DAR will perform maintenance.
+            - Return only the message.
+            """.formatted(
+                home.getCity(),
+                weatherDescription
+        );
+
+        String aiMessage = openAIService.generateReaderAnalysis(prompt);
+
+        String message =
+                aiMessage + "\n\n" +
+                        "للحصول على المزيد من النصائح والتنبيهات الذكية اليومية المخصصة لمنزلك، اشترك الآن في الباقة الذكية.";
+
+        sendNotification(
+                user,
+                "FREE_SMART_TIP_UPSELL",
+                "نصيحة ذكية مجانية من دار",
+                message
+        );
     }
 }
 
