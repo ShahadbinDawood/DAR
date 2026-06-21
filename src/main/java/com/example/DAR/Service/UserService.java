@@ -16,9 +16,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-private final NotificationService notificationService;
+    private final NotificationService notificationService;
 
 
     public List<UserDtoOut> getAllUsers() {

@@ -20,6 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class HomeService {
+    private static final int FREE_MAX_HOMES = 1;
 
     private final HomeRepository homeRepository;
     private final UserRepository userRepository;
@@ -39,11 +40,9 @@ public class HomeService {
             throw new ApiException("User not found");
         }
         UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(userId, UserSubscriptionStatus.ACTIVE);
-        if (subscription == null) {
-            throw new ApiException("Active subscription not found");
-        }
-        if (homeRepository.findHomesByUserId(userId).size() >= subscription.getSubscriptionPlan().getMaxHomes()) {
-            throw new ApiException("You have reached the maximum number of homes for your subscription");
+        int maxHomes = subscription == null ? FREE_MAX_HOMES : subscription.getSubscriptionPlan().getMaxHomes();
+        if (homeRepository.findHomesByUserId(userId).size() >= maxHomes) {
+            throw new ApiException("You have reached the maximum number of homes for your plan");
         }
         Home home = new Home();
         home.setName(homeDTOIn.getName());
@@ -54,7 +53,6 @@ public class HomeService {
         home.setCity(homeDTOIn.getCity());
         home.setPropertyType(homeDTOIn.getPropertyType());
         home.setUser(user);
-        homeRepository.save(home);
         // Send a one-time free AI smart tip after the user adds a home.
         Home savedHome = homeRepository.save(home);
         notificationService.sendFreeSmartTipUpsellNotification(savedHome.getId());
