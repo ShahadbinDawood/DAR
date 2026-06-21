@@ -78,6 +78,8 @@ public class PaymentService {
 
         userSubscription.setStatus(UserSubscriptionStatus.ACTIVE);
         userSubscription.setPaymentStatus(PaymentStatus.PAID);
+        userSubscription.setStartDate(LocalDate.now());
+        userSubscription.setEndDate(LocalDate.now().plusDays(29));
         userSubscriptionRepository.save(userSubscription);
         notificationService.sendSubscriptionActivatedNotification(
                 userSubscription.getUser(),
