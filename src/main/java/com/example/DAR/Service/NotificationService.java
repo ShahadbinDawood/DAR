@@ -37,6 +37,12 @@ public class NotificationService {
         return  notificationRepository.findAll();
     }
 
+    public Notification getNotificationById(Integer notificationId) {
+        Notification notification = notificationRepository.findNotificationById(notificationId);
+        if (notification == null) throw new ApiException("Notification not found");
+        return notification;
+    }
+
     public void sendWelcomeNotification(Integer userId) {
 
         User user = userRepository.findUserById(userId);
