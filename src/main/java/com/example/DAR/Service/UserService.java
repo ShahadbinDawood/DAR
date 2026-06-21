@@ -56,6 +56,7 @@ public class UserService {
         }
 
         User user = modelMapper.map(dto, User.class);
+        user.setAiCounter(0);
         user.setCreateAt(LocalDate.now());
         user.setRole("USER");
         user.setPassword(passwordEncoder.encode(dto.getPassword()));

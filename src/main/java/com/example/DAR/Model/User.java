@@ -36,12 +36,10 @@ public class User {
     @Column(nullable = false)
     private LocalDate createAt;
 
-    //
-    @Column(nullable = false)
-    private String role = "USER";
+    private Integer aiCounter;
 
-    @Column(nullable = false)
-    private Boolean smartAlertsEnabled = false;
+    @Column(nullable = true)
+    private Boolean smartAlertsEnabled = true;
 
     @Column(nullable = false)
     private Boolean smartAlertIntroSent = false;

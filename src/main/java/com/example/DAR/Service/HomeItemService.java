@@ -2,6 +2,7 @@ package com.example.DAR.Service;
 
 import com.example.DAR.Api.ApiException;
 import com.example.DAR.DTO.In.HomeItemDTOIn;
+import com.example.DAR.DTO.In.TroubleshootingDTOIn;
 import com.example.DAR.DTO.Out.AiAdviceDTOOut;
 import com.example.DAR.DTO.Out.HomeItemDTOOut;
 import com.example.DAR.DTO.Out.HomeItemSummaryDTOOut;
@@ -211,8 +212,66 @@ public class HomeItemService {
         if (homeItem == null) {
             throw new ApiException("Home item not found");
         }
+        UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(homeItem.getHome().getUser().getId(), UserSubscriptionStatus.ACTIVE);
+        if (subscription == null) {
+            throw new ApiException("Active subscription not found");
+        }
+        if (subscription.getSubscriptionPlan().getMaxAiReportsPerMonth() <= 0) {
+            throw new ApiException("AI features are not available in your subscription plan");
+        }
 
         String advice = aiService.generateHomeItemMaintenanceAdvice(homeItem);
+        List<String> adviceList = Arrays.stream(advice.split("\\n"))
+                .map(line -> line.replaceFirst("^-\\s*", "").trim())
+                .filter(line -> !line.isEmpty())
+                .toList();
+
+        return new AiAdviceDTOOut(adviceList);
+    }
+
+    public AiAdviceDTOOut getAiTroubleshootingSteps(Integer itemId, TroubleshootingDTOIn troubleshootingDTOIn) {
+        HomeItem homeItem = homeItemRepository.findHomeItemById(itemId);
+        if (homeItem == null) {
+            throw new ApiException("Home item not found");
+        }
+        UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(homeItem.getHome().getUser().getId(), UserSubscriptionStatus.ACTIVE);
+        if (subscription == null) {
+            throw new ApiException("Active subscription not found");
+        }
+        if (subscription.getSubscriptionPlan().getMaxAiReportsPerMonth() <= 0) {
+            throw new ApiException("AI features are not available in your subscription plan");
+        }
+
+        String advice = aiService.generateHomeItemTroubleshootingSteps(homeItem, troubleshootingDTOIn.getIssueDescription());
+        List<String> adviceList = Arrays.stream(advice.split("\\n"))
+                .map(line -> line.replaceFirst("^-\\s*", "").trim())
+                .filter(line -> !line.isEmpty())
+                .toList();
+
+        return new AiAdviceDTOOut(adviceList);
+    }
+
+    public AiAdviceDTOOut getAiNearbyServiceRecommendation(Integer itemId) {
+        HomeItem homeItem = homeItemRepository.findHomeItemById(itemId);
+        if (homeItem == null) {
+            throw new ApiException("Home item not found");
+        }
+        UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(homeItem.getHome().getUser().getId(), UserSubscriptionStatus.ACTIVE);
+        if (subscription == null) {
+            throw new ApiException("Active subscription not found");
+        }
+        if (subscription.getSubscriptionPlan().getMaxAiReportsPerMonth() <= 0) {
+            throw new ApiException("AI features are not available in your subscription plan");
+        }
+
+        Home home = homeItem.getHome();
+        List<NearbyPlaceDTOOut> places = overpassService.getNearbyMaintenancePlaces(
+                home.getLatitude(),
+                home.getLongitude(),
+                homeItem.getCategory()
+        );
+
+        String advice = aiService.generateNearbyServiceRecommendation(homeItem, places);
         List<String> adviceList = Arrays.stream(advice.split("\\n"))
                 .map(line -> line.replaceFirst("^-\\s*", "").trim())
                 .filter(line -> !line.isEmpty())
