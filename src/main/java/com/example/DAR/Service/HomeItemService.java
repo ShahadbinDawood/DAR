@@ -29,6 +29,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeItemService {
 
+    private static final int FREE_MAX_ITEMS = 10;
+    private static final int FREE_MAX_AI_REPORTS = 0;
+
     private final HomeItemRepository homeItemRepository;
     private final HomeRepository homeRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
@@ -48,11 +51,9 @@ public class HomeItemService {
             throw new ApiException("Home not found");
         }
         UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(home.getUser().getId(), UserSubscriptionStatus.ACTIVE);
-        if (subscription == null) {
-            throw new ApiException("Active subscription not found");
-        }
-        if (homeItemRepository.countHomeItemsByHomeUserId(home.getUser().getId()) >= subscription.getSubscriptionPlan().getMaxItems()) {
-            throw new ApiException("You have reached the maximum number of items for your subscription");
+        int maxItems = subscription == null ? FREE_MAX_ITEMS : subscription.getSubscriptionPlan().getMaxItems();
+        if (homeItemRepository.countHomeItemsByHomeUserId(home.getUser().getId()) >= maxItems) {
+            throw new ApiException("You have reached the maximum number of items for your plan");
         }
         HomeItem homeItem = new HomeItem();
         homeItem.setName(homeItemDTOIn.getName());
@@ -213,10 +214,8 @@ public class HomeItemService {
             throw new ApiException("Home item not found");
         }
         UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(homeItem.getHome().getUser().getId(), UserSubscriptionStatus.ACTIVE);
-        if (subscription == null) {
-            throw new ApiException("Active subscription not found");
-        }
-        if (subscription.getSubscriptionPlan().getMaxAiReportsPerMonth() <= 0) {
+        int maxAiReports = subscription == null ? FREE_MAX_AI_REPORTS : subscription.getSubscriptionPlan().getMaxAiReportsPerMonth();
+        if (maxAiReports <= 0) {
             throw new ApiException("AI features are not available in your subscription plan");
         }
 
@@ -235,10 +234,8 @@ public class HomeItemService {
             throw new ApiException("Home item not found");
         }
         UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(homeItem.getHome().getUser().getId(), UserSubscriptionStatus.ACTIVE);
-        if (subscription == null) {
-            throw new ApiException("Active subscription not found");
-        }
-        if (subscription.getSubscriptionPlan().getMaxAiReportsPerMonth() <= 0) {
+        int maxAiReports = subscription == null ? FREE_MAX_AI_REPORTS : subscription.getSubscriptionPlan().getMaxAiReportsPerMonth();
+        if (maxAiReports <= 0) {
             throw new ApiException("AI features are not available in your subscription plan");
         }
 
@@ -257,10 +254,8 @@ public class HomeItemService {
             throw new ApiException("Home item not found");
         }
         UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(homeItem.getHome().getUser().getId(), UserSubscriptionStatus.ACTIVE);
-        if (subscription == null) {
-            throw new ApiException("Active subscription not found");
-        }
-        if (subscription.getSubscriptionPlan().getMaxAiReportsPerMonth() <= 0) {
+        int maxAiReports = subscription == null ? FREE_MAX_AI_REPORTS : subscription.getSubscriptionPlan().getMaxAiReportsPerMonth();
+        if (maxAiReports <= 0) {
             throw new ApiException("AI features are not available in your subscription plan");
         }
 

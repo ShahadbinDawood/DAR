@@ -21,6 +21,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SensorService {
+
+
     private final SensorRepository sensorRepository;
     private final ModelMapper modelMapper;
     private final HomeRepository homeRepository ;
@@ -34,10 +36,10 @@ public class SensorService {
         }
         UserSubscription subscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(home.getUser().getId(), UserSubscriptionStatus.ACTIVE);
         if (subscription == null) {
-            throw new ApiException("Active subscription not found");
+            throw new ApiException("Sensor feature requires a paid subscription");
         }
         if (sensorRepository.countSensorsByHomeUserId(home.getUser().getId()) >= subscription.getSubscriptionPlan().getMaxSensors()) {
-            throw new ApiException("You have reached the maximum number of sensors for your subscription");
+            throw new ApiException("You have reached the maximum number of sensors for your plan");
         }
 
         Sensor sensor = modelMapper.map(dto, Sensor.class);

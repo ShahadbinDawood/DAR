@@ -46,6 +46,14 @@ public class UserSubscriptionService {
             throw new ApiException("User not found");
         }
 
+        List<UserSubscription> subscriptions = userSubscriptionRepository.findByUserAndStatuses(
+                userId,
+                List.of(UserSubscriptionStatus.PENDING, UserSubscriptionStatus.ACTIVE)
+        );
+        if (!subscriptions.isEmpty()){
+            throw new ApiException("User is already subscribed to a plan");
+        }
+
         SubscriptionPlan plan = subscriptionPlanRepository.findSubscriptionPlanById(planId);
 
         if (plan == null) {
@@ -56,23 +64,12 @@ public class UserSubscriptionService {
 
         userSubscription.setUser(user);
         userSubscription.setSubscriptionPlan(plan);
-        userSubscription.setStartDate(LocalDate.now());
-        userSubscription.setEndDate(LocalDate.now().plusDays(29));
 
-        if (plan.getPrice() == 0) {
-            userSubscription.setStatus(UserSubscriptionStatus.ACTIVE);
-            userSubscription.setPaymentStatus(PaymentStatus.PAID);
-        } else {
-            userSubscription.setStatus(UserSubscriptionStatus.PENDING);
-            userSubscription.setPaymentStatus(PaymentStatus.UNPAID);
-        }
+        userSubscription.setStatus(UserSubscriptionStatus.PENDING);
+        userSubscription.setPaymentStatus(PaymentStatus.UNPAID);
 
         UserSubscription savedSubscription = userSubscriptionRepository.save(userSubscription);
-        if (plan.getPrice() == 0) {
-            notificationService.sendSubscriptionActivatedNotification(user, plan.getName());
-        } else {
-            notificationService.sendSubscriptionPendingPaymentNotification(user, plan.getName());
-        }
+        notificationService.sendSubscriptionPendingPaymentNotification(user, plan.getName());
         return mapToDto(savedSubscription);
     }
 
@@ -105,37 +102,18 @@ public class UserSubscriptionService {
 
         UserSubscription activeSubscription = userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(userId, UserSubscriptionStatus.ACTIVE);
 
-        if (activeSubscription == null) {
-            throw new ApiException("Active subscription not found");
-        }
-
-        if (activeSubscription.getSubscriptionPlan().getId().equals(planId)) {
+        if (activeSubscription != null && activeSubscription.getSubscriptionPlan().getId().equals(planId)) {
             throw new ApiException("User is already subscribed to this plan");
         }
 
         UserSubscription newSubscription = new UserSubscription();
         newSubscription.setUser(user);
         newSubscription.setSubscriptionPlan(plan);
-        newSubscription.setStartDate(LocalDate.now());
-        newSubscription.setEndDate(LocalDate.now().plusDays(29));
-
-        if (plan.getPrice() == 0) {
-            activeSubscription.setStatus(UserSubscriptionStatus.CANCELLED);
-            userSubscriptionRepository.save(activeSubscription);
-            newSubscription.setStatus(UserSubscriptionStatus.ACTIVE);
-            newSubscription.setPaymentStatus(PaymentStatus.PAID);
-        } else {
-            newSubscription.setStatus(UserSubscriptionStatus.PENDING);
-            newSubscription.setPaymentStatus(PaymentStatus.UNPAID);
-        }
+        newSubscription.setStatus(UserSubscriptionStatus.PENDING);
+        newSubscription.setPaymentStatus(PaymentStatus.UNPAID);
 
         UserSubscription savedSubscription = userSubscriptionRepository.save(newSubscription);
-
-        if (plan.getPrice() == 0) {
-            notificationService.sendSubscriptionActivatedNotification(user, plan.getName());
-        } else {
-            notificationService.sendSubscriptionPendingPaymentNotification(user, plan.getName());
-        }
+        notificationService.sendSubscriptionPendingPaymentNotification(user, plan.getName());
 
         return mapToDto(savedSubscription);
     }
@@ -157,6 +135,17 @@ public class UserSubscriptionService {
         }
         return dtoOuts;
     }
+
+    public void expireOutdatedSubscriptions() {
+        List<UserSubscription> subscriptions = userSubscriptionRepository.findExpired(UserSubscriptionStatus.ACTIVE, LocalDate.now());
+
+        for (UserSubscription subscription : subscriptions) {
+            subscription.setStatus(UserSubscriptionStatus.EXPIRED);
+            userSubscriptionRepository.save(subscription);
+        }
+    }
+
+
 
     private UserSubscriptionDtoOut mapToDto(UserSubscription subscription) {
         UserSubscriptionDtoOut dto = modelMapper.map(subscription, UserSubscriptionDtoOut.class);
