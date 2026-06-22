@@ -61,6 +61,10 @@ public class UserService {
             throw new ApiException("Passwords don't match");
         }
 
+        if (!dto.getAcceptTermsAndConditions()){
+            throw new ApiException("acceptTermsAndConditions must be true");
+        }
+
         User user = modelMapper.map(dto, User.class);
         user.setAiCounter(0);
         user.setCreateAt(LocalDate.now());
