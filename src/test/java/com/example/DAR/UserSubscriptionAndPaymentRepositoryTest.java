@@ -10,6 +10,7 @@ import com.example.DAR.Repository.PaymentRepository;
 import com.example.DAR.Repository.SubscriptionPlanRepository;
 import com.example.DAR.Repository.UserRepository;
 import com.example.DAR.Repository.UserSubscriptionRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,31 +22,29 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserSubscriptionAndPaymentRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @Autowired
-    private SubscriptionPlanRepository subscriptionPlanRepository;
+    SubscriptionPlanRepository subscriptionPlanRepository;
 
     @Autowired
-    private UserSubscriptionRepository userSubscriptionRepository;
+    UserSubscriptionRepository userSubscriptionRepository;
 
     @Autowired
-    private PaymentRepository paymentRepository;
+    PaymentRepository paymentRepository;
 
-    private User user;
-    private User otherUser;
-    private SubscriptionPlan plan;
+    User user;
+    User otherUser;
+    SubscriptionPlan plan;
 
     @BeforeEach
-    public void setup() {
+    void setUp() {
         paymentRepository.deleteAll();
         userSubscriptionRepository.deleteAll();
         subscriptionPlanRepository.deleteAll();
@@ -56,20 +55,22 @@ public class UserSubscriptionAndPaymentRepositoryTest {
         plan = subscriptionPlanRepository.save(createPlan());
     }
 
+    // Test #1: Find expired active subscriptions
     @Test
-    public void findExpired_returnsOnlyExpiredActiveSubscriptions() {
+    public void findExpiredSubscriptionsTest() {
         UserSubscription expiredActive = userSubscriptionRepository.save(createSubscription(user, UserSubscriptionStatus.ACTIVE, LocalDate.now().minusDays(1)));
         userSubscriptionRepository.save(createSubscription(user, UserSubscriptionStatus.ACTIVE, LocalDate.now().plusDays(1)));
         userSubscriptionRepository.save(createSubscription(user, UserSubscriptionStatus.CANCELLED, LocalDate.now().minusDays(1)));
 
         List<UserSubscription> result = userSubscriptionRepository.findExpired(UserSubscriptionStatus.ACTIVE, LocalDate.now());
 
-        assertEquals(1, result.size());
-        assertEquals(expiredActive.getId(), result.get(0).getId());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(expiredActive.getId(), result.get(0).getId());
     }
 
+    // Test #2: Find user subscriptions by pending and active statuses
     @Test
-    public void findByUserAndStatuses_returnsPendingAndActiveOnly() {
+    public void findByUserAndStatusesTest() {
         UserSubscription pending = userSubscriptionRepository.save(createSubscription(user, UserSubscriptionStatus.PENDING, null));
         UserSubscription active = userSubscriptionRepository.save(createSubscription(user, UserSubscriptionStatus.ACTIVE, LocalDate.now().plusDays(10)));
         userSubscriptionRepository.save(createSubscription(user, UserSubscriptionStatus.EXPIRED, LocalDate.now().minusDays(1)));
@@ -80,13 +81,14 @@ public class UserSubscriptionAndPaymentRepositoryTest {
                 List.of(UserSubscriptionStatus.PENDING, UserSubscriptionStatus.ACTIVE)
         );
 
-        assertEquals(2, result.size());
-        assertTrue(result.stream().anyMatch(subscription -> subscription.getId().equals(pending.getId())));
-        assertTrue(result.stream().anyMatch(subscription -> subscription.getId().equals(active.getId())));
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertTrue(result.stream().anyMatch(subscription -> subscription.getId().equals(pending.getId())));
+        Assertions.assertTrue(result.stream().anyMatch(subscription -> subscription.getId().equals(active.getId())));
     }
 
+    // Test #3: Find payments by user id
     @Test
-    public void findByUser_returnsUserPaymentsOnly() {
+    public void findPaymentsByUserTest() {
         UserSubscription userSubscription = userSubscriptionRepository.save(createSubscription(user, UserSubscriptionStatus.ACTIVE, LocalDate.now().plusDays(10)));
         UserSubscription otherSubscription = userSubscriptionRepository.save(createSubscription(otherUser, UserSubscriptionStatus.ACTIVE, LocalDate.now().plusDays(10)));
         Payment userPayment = paymentRepository.save(createPayment(userSubscription, "TX-1"));
@@ -94,8 +96,8 @@ public class UserSubscriptionAndPaymentRepositoryTest {
 
         List<Payment> result = paymentRepository.findByUser(user.getId());
 
-        assertEquals(1, result.size());
-        assertEquals(userPayment.getId(), result.get(0).getId());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(userPayment.getId(), result.get(0).getId());
     }
 
 

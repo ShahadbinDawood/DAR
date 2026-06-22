@@ -17,6 +17,8 @@ import com.example.DAR.Repository.UserSubscriptionRepository;
 import com.example.DAR.Service.HomeService;
 import com.example.DAR.Service.NotificationService;
 import com.example.DAR.Service.UserSubscriptionService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -35,49 +37,69 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class SubscriptionBusinessServiceTest {
 
-    @Mock
-    private HomeRepository homeRepository;
+    @InjectMocks
+    HomeService homeService;
+
+    @InjectMocks
+    UserSubscriptionService userSubscriptionService;
 
     @Mock
-    private UserRepository userRepository;
+    HomeRepository homeRepository;
 
     @Mock
-    private UserSubscriptionRepository userSubscriptionRepository;
+    UserRepository userRepository;
 
     @Mock
-    private SubscriptionPlanRepository subscriptionPlanRepository;
+    UserSubscriptionRepository userSubscriptionRepository;
 
     @Mock
-    private NotificationService notificationService;
+    SubscriptionPlanRepository subscriptionPlanRepository;
 
-    private final ModelMapper modelMapper = new ModelMapper();
+    @Mock
+    NotificationService notificationService;
 
+    @Mock
+    ModelMapper modelMapper;
+
+    User user;
+    SubscriptionPlan plan;
+    HomeDTOIn homeDTOIn;
+    UserSubscriptionDtoOut userSubscriptionDtoOut;
+
+    @BeforeEach
+    void setUp() {
+        user = createUser();
+        plan = createPlan();
+        homeDTOIn = createHomeDto();
+
+        userSubscriptionDtoOut = new UserSubscriptionDtoOut();
+        userSubscriptionDtoOut.setId(10);
+        userSubscriptionDtoOut.setUserId(user.getId());
+        userSubscriptionDtoOut.setUsername(user.getUsername());
+        userSubscriptionDtoOut.setPlanName(plan.getName());
+        userSubscriptionDtoOut.setStatus(UserSubscriptionStatus.PENDING);
+        userSubscriptionDtoOut.setPaymentStatus(PaymentStatus.UNPAID);
+    }
+
+    // Test #1: Free user cannot add more than one home
     @Test
-    public void addHome_freeUserCannotAddMoreThanOneHome() {
-        HomeService homeService = new HomeService(homeRepository, userRepository, userSubscriptionRepository, modelMapper, notificationService);
-        User user = createUser();
+    @DisplayName("Should throw exception when free user adds more than one home")
+    public void addHomeFreeUserCannotAddMoreThanOneHomeTest() {
 
         when(userRepository.findUserById(1)).thenReturn(user);
         when(userSubscriptionRepository.findUserSubscriptionByUserIdAndStatus(1, UserSubscriptionStatus.ACTIVE)).thenReturn(null);
         when(homeRepository.findHomesByUserId(1)).thenReturn(List.of(new Home()));
 
-        ApiException exception = assertThrows(ApiException.class, () -> homeService.addHome(1, createHomeDto()));
+        ApiException exception = assertThrows(ApiException.class, () -> homeService.addHome(1, homeDTOIn));
 
         assertEquals("You have reached the maximum number of homes for your plan", exception.getMessage());
         verify(homeRepository, never()).save(any(Home.class));
     }
 
+    // Test #2: Create subscription as pending and unpaid
     @Test
-    public void createUserSubscription_createsPendingUnpaidSubscription() {
-        UserSubscriptionService service = new UserSubscriptionService(
-                userSubscriptionRepository,
-                userRepository,
-                subscriptionPlanRepository,
-                modelMapper,
-                notificationService
-        );
-        User user = createUser();
-        SubscriptionPlan plan = createPlan();
+    @DisplayName("Should create pending unpaid subscription")
+    public void createUserSubscriptionCreatesPendingUnpaidSubscriptionTest() {
 
         when(userRepository.findUserById(1)).thenReturn(user);
         when(userSubscriptionRepository.findByUserAndStatuses(eq(1), anyList())).thenReturn(List.of());
@@ -87,8 +109,9 @@ public class SubscriptionBusinessServiceTest {
             subscription.setId(10);
             return subscription;
         });
+        when(modelMapper.map(any(UserSubscription.class), eq(UserSubscriptionDtoOut.class))).thenReturn(userSubscriptionDtoOut);
 
-        UserSubscriptionDtoOut result = service.createUserSubscription(1, 2);
+        UserSubscriptionDtoOut result = userSubscriptionService.createUserSubscription(1, 2);
 
         ArgumentCaptor<UserSubscription> captor = ArgumentCaptor.forClass(UserSubscription.class);
         verify(userSubscriptionRepository).save(captor.capture());
