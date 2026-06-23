@@ -250,6 +250,10 @@ This section highlights the API endpoints
 | `GET`    | `/api/v1/user-subscription/status/{status}` | Returns user subscriptions filtered by status. | Admin  |
 | `DELETE` | `/api/v1/user-subscription/delete/{id}`     | Deletes a user subscription.                   | Admin  |
 
+
+### 💳 User Subscription Endpoints
+| `GET ` | `/get/anomalies/{homeId}`     | Get anomaly bills | ADMIN or home owner  |
+
 ---
 
 ## 🔌 External APIs & Integrations
