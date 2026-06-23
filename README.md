@@ -250,10 +250,12 @@ This section highlights the API endpoints
 | `GET`    | `/api/v1/user-subscription/status/{status}` | Returns user subscriptions filtered by status. | Admin  |
 | `DELETE` | `/api/v1/user-subscription/delete/{id}`     | Deletes a user subscription.                   | Admin  |
 
+### Bill Endpoints
 
-### 💳 User Subscription Endpoints
-| `GET ` | `/get/anomalies/{homeId}`     | Get anomaly bills | ADMIN or home owner  |
-
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `GET` | `/api/v1/bill/get/anomalies/{homeId}` | Get bills with abnormal consumption or unusual usage spikes. | Admin or home owner |
+| `GET` | `/api/v1/bill/anomalies-count/{homeId}` | Count the number of detected consumption anomalies for a home. | Admin or home owner |
 ---
 
 ## 🔌 External APIs & Integrations
