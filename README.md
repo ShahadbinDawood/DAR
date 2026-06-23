@@ -199,11 +199,9 @@ The collection includes:
 
 ---
 
-## 👩‍💻 My Implemented Endpoints
+## 👩‍💻  Implemented Endpoints
 
-This section highlights the API endpoints I worked on as part of my contribution to the DAR platform.
-
-My work focused mainly on **chatbot support, maintenance tracking, maintenance reminders, notifications, smart alerts, and subscription-related features**.
+This section highlights the API endpoints 
 
 ### 🤖 Chatbot Endpoints
 
