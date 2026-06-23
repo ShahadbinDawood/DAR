@@ -54,23 +54,6 @@
 
 ---
 
-## 🎯 Project Goal
-
-DAR aims to solve common home-care problems such as forgotten maintenance tasks, missing invoices and warranties, difficulty tracking bills, and lack of proactive smart reminders.
-
-The system helps users:
-
-* Organize homes, rooms, and home items.
-* Track maintenance history.
-* Schedule maintenance reminders.
-* Receive reminders through email, WhatsApp, and urgent calls.
-* Monitor bills and invoices.
-* Detect unusual bill consumption.
-* Use AI-powered recommendations.
-* Get smart alerts based on weather and sensor behavior.
-* Manage subscriptions and payments.
-
----
 
 ## ✨ Key Features
 
@@ -180,19 +163,9 @@ The project APIs are documented and tested using Postman.
 
 The collection includes:
 
-* Authentication
-* User management
-* Homes
-* Home items
-* Maintenance
-* Maintenance reminders
-* Notifications
-* Bills
-* Purchase invoices
-* Sensors
-* Subscriptions
-* Payments
-* Chatbot
+Authentication • User management • Homes • Home items • Maintenance • Maintenance reminders • Notifications • Bills • Purchase invoices • Sensors • Subscriptions • Payments • Chatbot
+
+
 
 ---
 
@@ -313,41 +286,6 @@ DAR/
 └── README.md
 ```
 
----
-
-## 🔑 Environment Variables
-
-The project uses environment variables to protect sensitive credentials and API keys.
-
-```env
-DB_URL=your_database_url
-DB_USERNAME=your_database_username
-DB_PASSWORD=your_database_password
-
-JWT_SECRET=your_jwt_secret
-
-OPENAI_API_KEY=your_openai_api_key
-WEATHER_API_KEY=your_weather_api_key
-
-TWILIO_ACCOUNT_SID=your_twilio_account_sid
-TWILIO_AUTH_TOKEN=your_twilio_auth_token
-TWILIO_PHONE_NUMBER=your_twilio_phone_number
-
-MAIL_USERNAME=your_email
-MAIL_PASSWORD=your_email_app_password
-
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-```
-
-<table>
-  <tr>
-    <td bgcolor="#F7F2EC">
-      API keys, database credentials, and secrets should be stored in environment variables and not committed to the source code.
-    </td>
-  </tr>
-</table>
 
 ---
 
@@ -370,12 +308,6 @@ Example local database URL:
 spring.datasource.url=jdbc:mysql://localhost:3306/dar_system
 spring.datasource.username=root
 spring.datasource.password=your_password
-```
-
-If you are using MAMP, the MySQL port may be:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:8889/dar_system
 ```
 
 ---
@@ -494,28 +426,6 @@ DAR uses external services to support smart features, automation, notifications,
     </td>
     <td>Subscription checkout and payment links</td>
   </tr>
-
-  <tr bgcolor="#E8DED2">
-    <td>
-      <img src="https://img.shields.io/badge/Cloudinary-Cloud%20Storage-E3F2FD?style=for-the-badge&logo=cloudinary&logoColor=3448C5" />
-    </td>
-    <td>Cloud-based file and image storage</td>
-  </tr>
-
-  <tr>
-    <td>
-      <img src="https://img.shields.io/badge/Overpass-Location%20API-E8F5E9?style=for-the-badge&logo=openstreetmap&logoColor=7EBC6F" />
-    </td>
-    <td>Location-based nearby service search</td>
-  </tr>
-
-  <tr bgcolor="#E8DED2">
-    <td>
-      <img src="https://img.shields.io/badge/Nominatim-Geocoding-E8F5E9?style=for-the-badge&logo=openstreetmap&logoColor=7EBC6F" />
-    </td>
-    <td>Address geocoding and location lookup</td>
-  </tr>
-
   <tr>
     <td>
       <img src="https://img.shields.io/badge/AWS%20Elastic%20Beanstalk-Backend-FFF3E0?style=for-the-badge&logo=amazonaws&logoColor=FF9900" />
