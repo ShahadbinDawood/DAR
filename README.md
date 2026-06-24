@@ -383,38 +383,38 @@ DAR uses external services to support smart features, automation, notifications,
 
   <tr>
     <td>
-      <img src="https://img.shields.io/badge/OpenAI-API-E8F5E9?style=for-the-badge&logo=openai&logoColor=412991" />
+      <img src="https://img.shields.io/badge/Claude-API-E8F5E9?style=for-the-badge&logo=anthropic&logoColor=191919" />
     </td>
-    <td>Chatbot answers and AI maintenance advice</td>
+    <td>AI chatbot, bill reading, anomaly detection, and smart maintenance advice</td>
   </tr>
 
   <tr bgcolor="#E8DED2">
     <td>
-      <img src="https://img.shields.io/badge/WeatherAPI-Weather-E3F2FD?style=for-the-badge&logo=weatherapi&logoColor=2196F3" />
+      <img src="https://img.shields.io/badge/n8n-Automation-FFECEF?style=for-the-badge&logo=n8n&logoColor=EA4B71" />
     </td>
-    <td>Weather-based maintenance alerts and advice</td>
+    <td>Workflow automation and webhook orchestration</td>
   </tr>
-
-  <tr>
+  <tr bgcolor="#E8DED2">
     <td>
       <img src="https://img.shields.io/badge/Twilio-WhatsApp%20%26%20Voice-FFEBEE?style=for-the-badge&logo=twilio&logoColor=F22F46" />
     </td>
     <td>WhatsApp reminders and urgent calls</td>
   </tr>
 
-  <tr bgcolor="#E8DED2">
+  <tr>
     <td>
       <img src="https://img.shields.io/badge/Gmail-SMTP-FFF3E0?style=for-the-badge&logo=gmail&logoColor=EA4335" />
     </td>
     <td>Email reminders and notifications</td>
   </tr>
 
-  <tr>
+  <tr bgcolor="#E8DED2">
     <td>
       <img src="https://img.shields.io/badge/Lemon%20Squeezy-Payments-FFF0F5?style=for-the-badge&logo=lemonsqueezy&logoColor=7047EB" />
     </td>
     <td>Subscription checkout and payment links</td>
   </tr>
+
   <tr>
     <td>
       <img src="https://img.shields.io/badge/AWS%20Elastic%20Beanstalk-Backend-FFF3E0?style=for-the-badge&logo=amazonaws&logoColor=FF9900" />
@@ -433,7 +433,7 @@ DAR uses external services to support smart features, automation, notifications,
 ---
 
 ## 🤖 AI Features
-
+ 
 <table>
   <tr>
     <td bgcolor="#E8DED2">
@@ -441,20 +441,20 @@ DAR uses external services to support smart features, automation, notifications,
     </td>
   </tr>
 </table>
-
 <br>
-
 <table>
   <tr>
-    <td>🤖 AI chatbot to answer user questions about the platform.</td>
+    <td>📊 Anomaly detection for user consumption patterns with smart alerts for unusual spikes.</td>
   </tr>
   <tr bgcolor="#E8DED2">
-    <td>🌦️ AI weather-based maintenance advice for each home.</td>
+    <td>📄 Export detailed reports for expenses and invoices with AI-powered insights and tips.</td>
   </tr>
   <tr>
-    <td>🔔 Daily smart AI reminders for users with an active paid subscription.</td>
+    <td>🧾 Read and extract bill data from images using AI and automatically add them to the system.</td>
   </tr>
- 
+  <tr bgcolor="#E8DED2">
+    <td>📉 Compare bills across months with AI-generated analysis to highlight changes and spending trends.</td>
+  </tr>
 </table>
 
 ---
