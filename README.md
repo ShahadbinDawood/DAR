@@ -316,69 +316,58 @@ spring.datasource.password=your_password
 
 This section highlights the main implemented API endpoints in the DAR backend.
 
-### 🤖 Chatbot Endpoints
 
-| Method | Endpoint                    | Description                                                  | Access                 |
-| ------ | --------------------------- | ------------------------------------------------------------ | ---------------------- |
-| `GET`  | `/api/v1/chatbot/questions` | Returns suggested chatbot questions for users.               | Public                 |
-| `POST` | `/api/v1/chatbot/ask`       | Sends a user question to the chatbot and returns the answer. | Public / Authenticated |
-
+### 🔋 Sensor Reading – `/api/v1/sensor-reading`
+ 
+| Method | Endpoint | Description | Access |
+| ------ | -------- | ----------- | ------ |
+| `GET` | `/get/sensor/{sensorId}` | Get all readings by sensor | Admin or sensor owner |
+| `GET` | `/get/{id}` | Get reading by ID | Admin or reading owner |
+| `GET` | `/get/latest/{sensorId}` | Get latest reading for a sensor | Admin or sensor owner |
+| `GET` | `/analyze/{sensorId}` | AI-powered sensor analysis (triggers workflow) | Admin or sensor owner |
+| `GET` | `/report/{homeId}` | Get full sensor report for home | Admin or home owner |
+| `GET` | `/report/{homeId}/pdf` | Download sensor report as PDF | Admin or home owner |
+ 
 ---
-
-### 🛠️ Maintenance Endpoints
-
-| Method | Endpoint                                        | Description                                               | Access        |
-| ------ | ----------------------------------------------- | --------------------------------------------------------- | ------------- |
-| `GET`  | `/api/v1/maintenance/upcoming/{homeId}`         | Returns upcoming maintenance records for a specific home. | Owner / Admin |
-| `GET`  | `/api/v1/maintenance/overdue/{homeId}`          | Returns overdue maintenance records for a specific home.  | Owner / Admin |
-| `PUT`  | `/api/v1/maintenance/mark-done/{maintenanceId}` | Marks a maintenance record as completed.                  | Owner / Admin |
-
+ 
+### 🌡️ Sensor Management – `/api/v1/sensor`
+ 
+| Method | Endpoint | Description | Access |
+| ------ | -------- | ----------- | ------ |
+| `PUT` | `/connect/{id}` | Connect sensor and mark as active | Admin or sensor owner |
+| `PUT` | `/disconnect/{id}` | Disconnect sensor and mark as inactive | Admin or sensor owner |
+| `GET` | `/get/home/{homeId}` | Get all sensors for a home | Admin or home owner |
+| `GET` | `/get/{id}` | Get sensor by ID | Admin or sensor owner |
+| `GET` | `/get/active/{homeId}` | Get all active sensors for a home | Admin or home owner |
+ 
 ---
-
-### ⏰ Maintenance Reminder Endpoints
-
-| Method | Endpoint                                                         | Description                                             | Access        |
-| ------ | ---------------------------------------------------------------- | ------------------------------------------------------- | ------------- |
-| `POST` | `/api/v1/maintenance-reminder/add/{maintenanceId}`               | Adds a maintenance reminder for a maintenance record.   | Owner / Admin |
-| `PUT`  | `/api/v1/maintenance-reminder/update/{id}/{homeId}/{homeItemId}` | Updates a maintenance reminder and validates ownership. | Owner / Admin |
-| `PUT`  | `/api/v1/maintenance-reminder/mark-sent/{id}`                    | Marks a maintenance reminder as sent.                   | Owner / Admin |
-| `GET`  | `/api/v1/maintenance-reminder/upcoming/{homeId}`                 | Returns upcoming reminders for a home.                  | Owner / Admin |
-| `GET`  | `/api/v1/maintenance-reminder/today/{homeId}`                    | Returns today’s reminders for a home.                   | Owner / Admin |
-| `POST` | `/api/v1/maintenance-reminder/send/{reminderId}`                 | Sends a maintenance reminder manually.                  | Owner / Admin |
-| `PUT`  | `/api/v1/maintenance-reminder/reactivate/{reminderId}`           | Reactivates a reminder after it has been sent.          | Owner / Admin |
-| `GET`  | `/api/v1/maintenance-reminder/summary/{homeId}`                  | Returns a summary of reminders for a home.              | Owner / Admin |
-| `GET`  | `/api/v1/maintenance-reminder/ai-weather-advice/{homeId}`        | Generates AI weather-based maintenance advice.          | Owner / Admin |
-
+ 
+### 🧾 Purchase Invoice – `/api/v1/purchase-invoice`
+ 
+| Method | Endpoint | Description | Access |
+| ------ | -------- | ----------- | ------ |
+| `GET` | `/get/home/{homeId}` | Get all invoices for a home | Admin or home owner |
+| `GET` | `/get/{id}` | Get invoice by ID | Admin or invoice owner |
+| `GET` | `/get/category/{homeId}/{category}` | Get invoices filtered by category | Admin or home owner |
+| `POST` | `/upload/{homeId}` | Upload invoice image (AI extraction) | Admin or home owner |
+| `GET` | `/stats/{homeId}` | Get invoice statistics for home | Admin or home owner |
+| `GET` | `/active-warranties/{homeId}` | Count active warranties | Admin or home owner |
+ 
 ---
+ 
+### 💡 Bills – `/api/v1/bill`
+ 
+| Method | Endpoint | Description | Access |
+| ------ | -------- | ----------- | ------ |
+| `PUT` | `/pay/{id}` | Mark bill as paid | Admin or bill owner |
+| `PUT` | `/overdue/{id}` | Mark bill as overdue | Admin or bill owner |
+| `GET` | `/get/status/{homeId}/{status}` | Get bills filtered by status | Admin or home owner |
+| `GET` | `/get/type/{homeId}/{type}` | Get bills filtered by type | Admin or home owner |
+| `POST` | `/upload/{homeId}` | Upload bill image (AI extraction) | Admin or home owner |
+| `GET` | `/report/{homeId}/{year}/{month}` | Get monthly bill report | Admin or home owner |
+| `GET` | `/compare/{homeId}` | Compare bills over months (`?type=&months=6`) | Admin or home owner |
+| `GET` | `/report/pdf/{homeId}/{year}/{month}` | Download monthly report as PDF | Admin or home owner |
 
-### 🔔 Notification Endpoints
-
-| Method   | Endpoint                                             | Description                                        | Access        |
-| -------- | ---------------------------------------------------- | -------------------------------------------------- | ------------- |
-| `PUT`    | `/api/v1/notification/mark-as-read/{notificationId}` | Marks one notification as read.                    | Owner / Admin |
-| `PUT`    | `/api/v1/notification/mark-all-as-read`              | Marks all user notifications as read.              | Authenticated |
-| `DELETE` | `/api/v1/notification/delete/{notificationId}`       | Deletes a notification.                            | Owner / Admin |
-| `GET`    | `/api/v1/notification/summary`                       | Returns notification summary for the current user. | Authenticated |
-| `POST`   | `/api/v1/notification/weather-alert/{homeId}`        | Creates a weather alert notification for a home.   | Admin         |
-| `POST`   | `/api/v1/notification/smart-alert-intro/{userId}`    | Sends the smart alert introduction notification.   | Admin         |
-
----
-
-### 💳 User Subscription Endpoints
-
-| Method   | Endpoint                                    | Description                                    | Access |
-| -------- | ------------------------------------------- | ---------------------------------------------- | ------ |
-| `GET`    | `/api/v1/user-subscription/status/{status}` | Returns user subscriptions filtered by status. | Admin  |
-| `DELETE` | `/api/v1/user-subscription/delete/{id}`     | Deletes a user subscription.                   | Admin  |
-
----
-
-### 📈 Bill Endpoints
-
-| Method | Endpoint                                | Description                                                    | Access              |
-| ------ | --------------------------------------- | -------------------------------------------------------------- | ------------------- |
-| `GET`  | `/api/v1/bill/get/anomalies/{homeId}`   | Get bills with abnormal consumption or unusual usage spikes.   | Admin or home owner |
-| `GET`  | `/api/v1/bill/anomalies-count/{homeId}` | Count the number of detected consumption anomalies for a home. | Admin or home owner |
 
 ---
 
