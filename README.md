@@ -53,6 +53,13 @@
 </table>
 
 ---
+## 🎬 DAR Prototype Demo
+
+
+<p align="center">
+  <img src="./docs/dar-demo.gif" alt="DAR Prototype Demo" width="100%">
+</p>
+
 
 
 ## ✨ Key Features
@@ -159,7 +166,7 @@ http://Dar-env.eba-yke92rm3.eu-central-1.elasticbeanstalk.com
 
 The project APIs are documented and tested using Postman.
 
-[View Postman Collection](https://documenter.getpostman.com/view/37607702/2sBXwwnSzc)
+[View Postman Collection](https://documenter.getpostman.com/view/37607702/2sBXwwoTyF)
 
 The collection includes:
 
